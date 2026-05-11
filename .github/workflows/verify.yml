@@ -3,7 +3,7 @@ name: Logic Verification CI
 on:
   push: # This tells GitHub when to run the script
     branches: [ "main" ]
-  pull_request:
+  pull_request_target: # This allows the bot to talk on forks
     branches: [ "main" ]
 
 jobs:
@@ -11,10 +11,14 @@ jobs:
     runs-on: ubuntu-latest # We use Ubuntu (Linux) because it's the industry standard for servers
     permissions:
       pull-requests: write # This gives the bot permission to comment
+      contents: read
     
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
+      with:
+        # This ensures we test the code FROM the PR, not just the main branch
+        ref: ${{ github.event.pull_request.head.sha }}
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -26,7 +30,7 @@ jobs:
       run: python test_core.py
 
     - name: Post Success Comment
-      if: success() && github.event_name == 'pull_request'
+      if: success() && (github.event_name == 'pull_request' || github.event_name == 'pull_request_target')
       uses: thollander/actions-comment-pull-request@v2
       with:
         message: |
@@ -39,7 +43,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Failure Comment
-      if: failure() && github.event_name == 'pull_request'
+      if: failure() && (github.event_name == 'pull_request' || github.event_name == 'pull_request_target')
       uses: thollander/actions-comment-pull-request@v2
       with:
         message: "### ❌ LOGIC COLLAPSE\nThe automated suite has detected that 1 is no longer 1. Please fix the broken logic before merging."

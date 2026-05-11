@@ -75,6 +75,5 @@ def main():
 
     print("\nConclusion: 1 is indeed 1. My work here is done.")
 
-if __name__ == "__main__":
+if __name__ == "__main__": # Internal CI verification test
     main()
-    
