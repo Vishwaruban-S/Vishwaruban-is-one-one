@@ -1,5 +1,10 @@
 import is_one_one
 import sys
+import io
+
+# Fix for Windows console encoding issues with emojis
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def run_verification():
     print("🧪 Starting Automated Quality Check...")
@@ -12,6 +17,7 @@ def run_verification():
             is_one_one.is_one_using_time_travel,
             is_one_one.is_one_using_interdimensional_tax_fraud,
             is_one_one.is_one_using_roman_numerals,
+            is_one_one.is_one_under_extreme_pressure
         ]
         
         for func in checks:
